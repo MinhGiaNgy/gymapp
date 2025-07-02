@@ -1,0 +1,31 @@
+.app-container {
+  /* Remove max-width to allow full width */
+  width: 100%;
+  padding: 1rem;
+  background-color: transparent;
+}
+
+.section-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  /* Add padding to keep content away from screen edges */
+  padding: 0 1rem;
+  /* Make it use full width */
+  width: 100%;
+}
+
+.section {
+  flex: 1;
+  background-color: #e2e8f0;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  width: 100%;
+}
