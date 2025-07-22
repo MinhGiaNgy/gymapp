@@ -1,14 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
-
-const ExerciseDetail = () => {
-  return (
-    <div className="exercise-detail">
-      <h1>Exercise Details</h1>
-      {/* Add exercise specific content here */}
-    </div>
-  );
-};
+import ExerciseDetail from './ExerciseDetail';
 
 function App() {
   return (
@@ -119,7 +111,10 @@ function App() {
         } />
         
         <Route path="/:exerciseName" element={<ExerciseDetail />} />
+        <Route path="/workout-plan" element={<div>Workout Plan Page</div>} />
+        <Route path="/progress" element={<div>Progress Page</div>} />
         <Route path="/statistics" element={<div>Statistics Page</div>} />
+        <Route path="/nutrition" element={<div>Nutrition Page</div>} />
         <Route path="/settings" element={<div>Settings Page</div>} />
       </Routes>
     </Router>
