@@ -300,6 +300,19 @@ footer {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.guest-link {
+  display: inline-flex;
+  margin-bottom: 0.8rem;
+  color: #93c5fd;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.guest-link:hover {
+  color: #dbeafe;
+}
+
 .auth-toggle {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -388,6 +401,36 @@ footer {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 0.78rem;
   word-break: break-all;
+}
+
+.auth-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin: 0.6rem 0 0.9rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background-color: #0f172a;
+}
+
+.auth-prompt p {
+  margin: 0;
+  color: #bfdbfe;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.82rem;
+}
+
+.auth-prompt-button {
+  border-radius: 7px;
+  padding: 0.35rem 0.6rem;
+  background-color: #1d4ed8;
+  color: #dbeafe;
+  text-decoration: none;
+  white-space: nowrap;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.8rem;
 }
 
 .page-panel {

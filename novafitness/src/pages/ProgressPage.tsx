@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api, type ProgressLog } from '../api';
 import { exerciseLibrary } from '../exerciseData';
+import { useAuth } from '../auth/useAuth';
+import AuthPrompt from '../components/AuthPrompt';
 
 const toDateInput = (date: Date) => {
   const adjusted = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -25,6 +27,7 @@ const getRating = (logs: ProgressLog[]) => {
 };
 
 const ProgressPage = () => {
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [selectedExerciseSlug, setSelectedExerciseSlug] = useState(exerciseLibrary[0]?.slug ?? '');
   const [weight, setWeight] = useState('135');
@@ -34,6 +37,7 @@ const ProgressPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   const exerciseMatches = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -49,6 +53,12 @@ const ProgressPage = () => {
   );
 
   useEffect(() => {
+    if (!user) {
+      setLogs([]);
+      setLoading(false);
+      return;
+    }
+
     const timer = setTimeout(async () => {
       setLoading(true);
       setError('');
@@ -63,7 +73,7 @@ const ProgressPage = () => {
     }, 220);
 
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, user]);
 
   const stats = useMemo(() => {
     const totalLogs = logs.length;
@@ -77,6 +87,11 @@ const ProgressPage = () => {
   }, [logs]);
 
   const handleAddLog = async () => {
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
+
     if (!selectedExercise) {
       setError('Pick an exercise before logging weight.');
       return;
@@ -103,6 +118,11 @@ const ProgressPage = () => {
   };
 
   const handleDelete = async (id: number) => {
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
+
     setError('');
     try {
       await api.deleteProgressLog(id);
@@ -125,6 +145,10 @@ const ProgressPage = () => {
         placeholder="search for an exercise you want to log"
         className="search-input"
       />
+
+      {showAuthPrompt && !user ? (
+        <AuthPrompt message="Log entries are saved to your account. Sign up or log in to start tracking progress." />
+      ) : null}
 
       <div className="suggestions-row">
         {exerciseMatches.map((exercise) => (
@@ -211,7 +235,7 @@ const ProgressPage = () => {
           />
         </label>
         <button type="button" onClick={handleAddLog} className="primary-button" disabled={saving}>
-          {saving ? 'Saving...' : 'Log Weight'}
+          {saving ? 'Saving...' : user ? 'Log Weight' : 'Log Weight (Login Required)'}
         </button>
       </div>
 
@@ -248,7 +272,7 @@ const ProgressPage = () => {
               {logs.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="empty-state">
-                    No logs found.
+                    {user ? 'No logs found.' : 'Guest mode: log in to start tracking your progress.'}
                   </td>
                 </tr>
               ) : null}

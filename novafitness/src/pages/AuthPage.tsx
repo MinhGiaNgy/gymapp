@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 
 type AuthMode = 'login' | 'register';
@@ -36,6 +37,9 @@ const AuthPage = () => {
       <div className="auth-card">
         <h1>Nova Fitness</h1>
         <p>Sign in to manage your workout plans and progress logs.</p>
+        <Link to="/" className="guest-link">
+          Continue as Guest
+        </Link>
 
         <div className="auth-toggle">
           <button

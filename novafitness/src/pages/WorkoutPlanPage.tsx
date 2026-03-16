@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api, type WorkoutPlan } from '../api';
 import { exerciseLibrary } from '../exerciseData';
+import { useAuth } from '../auth/useAuth';
+import AuthPrompt from '../components/AuthPrompt';
 
 const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -61,6 +63,7 @@ const downloadCsv = (plans: WorkoutPlan[], month: string) => {
 };
 
 const WorkoutPlanPage = () => {
+  const { user } = useAuth();
   const [month, setMonth] = useState(toMonthInput(new Date()));
   const [selectedDate, setSelectedDate] = useState(toDateInput(new Date()));
   const [exerciseSlug, setExerciseSlug] = useState(exerciseLibrary[0]?.slug ?? '');
@@ -71,6 +74,7 @@ const WorkoutPlanPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [guestPromptMessage, setGuestPromptMessage] = useState('');
 
   const calendarDays = useMemo(() => buildCalendarDays(month), [month]);
 
@@ -85,6 +89,12 @@ const WorkoutPlanPage = () => {
   }, [plans]);
 
   useEffect(() => {
+    if (!user) {
+      setPlans([]);
+      setLoading(false);
+      return;
+    }
+
     const loadPlans = async () => {
       setLoading(true);
       setError('');
@@ -98,9 +108,14 @@ const WorkoutPlanPage = () => {
       }
     };
     loadPlans();
-  }, [month]);
+  }, [month, user]);
 
   const handleAddBlock = async () => {
+    if (!user) {
+      setGuestPromptMessage('Create and save workout plan blocks after signing up or logging in.');
+      return;
+    }
+
     const exercise = exerciseLibrary.find((item) => item.slug === exerciseSlug);
     if (!exercise) {
       setError('Please pick an exercise block.');
@@ -129,6 +144,11 @@ const WorkoutPlanPage = () => {
   };
 
   const handleDeleteBlock = async (id: number) => {
+    if (!user) {
+      setGuestPromptMessage('Log in to edit or delete saved workout blocks.');
+      return;
+    }
+
     setError('');
     try {
       await api.deleteWorkoutPlan(id);
@@ -155,7 +175,17 @@ const WorkoutPlanPage = () => {
           <button type="button" onClick={() => setMonth(shiftMonth(month, 1))} className="small-button">
             Next Month
           </button>
-          <button type="button" className="small-button export-button" onClick={() => downloadCsv(plans, month)}>
+          <button
+            type="button"
+            className="small-button export-button"
+            onClick={() => {
+              if (!user) {
+                setGuestPromptMessage('Exporting plans is available after sign up or login.');
+                return;
+              }
+              downloadCsv(plans, month);
+            }}
+          >
             Export to Excel (.csv)
           </button>
         </div>
@@ -164,6 +194,14 @@ const WorkoutPlanPage = () => {
       <p className="section-note">
         Create exercise blocks and place them on the calendar. Your plan is tied to your account email.
       </p>
+      {!user ? (
+        <AuthPrompt
+          message={
+            guestPromptMessage ||
+            'You are using guest mode. Sign up or log in to create, save, and export your workout plans.'
+          }
+        />
+      ) : null}
 
       <div className="block-picker">
         {exerciseLibrary.slice(0, 8).map((exercise) => (
@@ -235,7 +273,7 @@ const WorkoutPlanPage = () => {
           />
         </label>
         <button type="button" onClick={handleAddBlock} className="primary-button" disabled={saving}>
-          {saving ? 'Saving...' : 'Add to Calendar'}
+          {saving ? 'Saving...' : user ? 'Add to Calendar' : 'Add to Calendar (Login Required)'}
         </button>
       </div>
 

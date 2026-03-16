@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '../auth/useAuth';
+import AuthPrompt from '../components/AuthPrompt';
 
 const SettingsPage = () => {
   const { user, logout, updateEmail, updatePassword } = useAuth();
@@ -11,6 +12,17 @@ const SettingsPage = () => {
   const [emailMessage, setEmailMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
   const [error, setError] = useState('');
+
+  if (!user) {
+    return (
+      <section className="page-panel">
+        <div className="page-header">
+          <h1>Settings</h1>
+        </div>
+        <AuthPrompt message="Settings are available after signing up or logging in." />
+      </section>
+    );
+  }
 
   const handleEmailSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,7 +63,7 @@ const SettingsPage = () => {
       <div className="settings-grid">
         <div className="settings-card">
           <h3>Profile Management</h3>
-          <p>Current account: {user?.email ?? 'Unknown user'}</p>
+          <p>Current account: {user.email}</p>
 
           <form onSubmit={handleEmailSubmit} className="settings-form">
             <label htmlFor="newEmail">New Email</label>

@@ -92,10 +92,21 @@ const AppShell = () => {
               {item.label}
             </NavLink>
           ))}
-          <p className="user-email">{user?.email}</p>
-          <button type="button" className="nav-item nav-button" onClick={logout}>
-            Logout
-          </button>
+          {user ? (
+            <>
+              <p className="user-email">{user.email}</p>
+              <button type="button" className="nav-item nav-button" onClick={logout}>
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="user-email">Guest Mode</p>
+              <NavLink to="/auth" className="nav-item nav-button">
+                Sign Up / Log In
+              </NavLink>
+            </>
+          )}
         </div>
       </aside>
 
@@ -107,6 +118,7 @@ const AppShell = () => {
           <Route path="/statistics" element={<StatisticsPage />} />
           <Route path="/nutrition" element={<NutritionPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/auth" element={user ? <Navigate to="/" replace /> : <AuthPage />} />
           <Route path="/:exerciseName" element={<ExerciseDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -116,13 +128,17 @@ const AppShell = () => {
 };
 
 function App() {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return <div className="loading-screen">Loading your account...</div>;
   }
 
-  return <Router>{user ? <AppShell /> : <AuthPage />}</Router>;
+  return (
+    <Router>
+      <AppShell />
+    </Router>
+  );
 }
 
 export default App;
