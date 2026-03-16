@@ -1,7 +1,14 @@
-import { BrowserRouter as Router, Link, NavLink, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Link, NavLink, Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import ExerciseDetail from './ExerciseDetail';
 import { exerciseLibrary, type ExerciseCategory } from './exerciseData';
+import { useAuth } from './auth/useAuth';
+import AuthPage from './pages/AuthPage';
+import WorkoutPlanPage from './pages/WorkoutPlanPage';
+import ProgressPage from './pages/ProgressPage';
+import SettingsPage from './pages/SettingsPage';
+import NutritionPage from './pages/NutritionPage';
+import StatisticsPage from './pages/StatisticsPage';
 
 interface CategoryConfig {
   key: ExerciseCategory;
@@ -24,13 +31,6 @@ const sidebarLinks = [
   { to: '/nutrition', label: 'Nutrition' },
   { to: '/settings', label: 'Settings' },
 ];
-
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="placeholder-page">
-    <h1>{title}</h1>
-    <p>Section is ready for content. Use the sidebar to navigate back to training modules.</p>
-  </div>
-);
 
 const HomePage = () => (
   <div className="app-container">
@@ -72,9 +72,11 @@ const HomePage = () => (
   </div>
 );
 
-function App() {
+const AppShell = () => {
+  const { logout, user } = useAuth();
+
   return (
-    <Router>
+    <>
       <aside className="sidebar">
         <div className="sidebar-content">
           <div className="icon-space">
@@ -90,22 +92,37 @@ function App() {
               {item.label}
             </NavLink>
           ))}
+          <p className="user-email">{user?.email}</p>
+          <button type="button" className="nav-item nav-button" onClick={logout}>
+            Logout
+          </button>
         </div>
       </aside>
 
       <main className="page-shell">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/workout-plan" element={<WorkoutPlanPage />} />
+          <Route path="/progress" element={<ProgressPage />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/nutrition" element={<NutritionPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/:exerciseName" element={<ExerciseDetail />} />
-          <Route path="/workout-plan" element={<PlaceholderPage title="Workout Plan" />} />
-          <Route path="/progress" element={<PlaceholderPage title="Progress" />} />
-          <Route path="/statistics" element={<PlaceholderPage title="Statistics" />} />
-          <Route path="/nutrition" element={<PlaceholderPage title="Nutrition" />} />
-          <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-    </Router>
+    </>
   );
+};
+
+function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="loading-screen">Loading your account...</div>;
+  }
+
+  return <Router>{user ? <AppShell /> : <AuthPage />}</Router>;
 }
 
 export default App;
