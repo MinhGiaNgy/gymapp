@@ -9,6 +9,7 @@ import ProgressPage from './pages/ProgressPage';
 import SettingsPage from './pages/SettingsPage';
 import NutritionPage from './pages/NutritionPage';
 import StatisticsPage from './pages/StatisticsPage';
+import AiChatPage from './pages/AiChatPage';
 
 interface CategoryConfig {
   key: ExerciseCategory;
@@ -28,6 +29,7 @@ const sidebarLinks = [
   { to: '/workout-plan', label: 'Workout Plan' },
   { to: '/progress', label: 'Progress' },
   { to: '/statistics', label: 'Statistics' },
+  { to: '/ai-chat', label: 'AI Chat' },
   { to: '/nutrition', label: 'Nutrition' },
   { to: '/settings', label: 'Settings' },
 ];
@@ -116,6 +118,7 @@ const AppShell = () => {
           <Route path="/workout-plan" element={<WorkoutPlanPage />} />
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/ai-chat" element={<AiChatPage />} />
           <Route path="/nutrition" element={<NutritionPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/auth" element={user ? <Navigate to="/" replace /> : <AuthPage />} />

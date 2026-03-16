@@ -21,6 +21,11 @@ export interface ProgressLog {
   notes: string;
 }
 
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 const apiRequest = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const response = await fetch(path, {
     ...init,
@@ -73,4 +78,7 @@ export const api = {
     apiRequest<{ user: User }>('/api/settings/email', { method: 'PATCH', body: JSON.stringify(payload) }),
   updatePassword: (payload: { currentPassword: string; newPassword: string }) =>
     apiRequest<{ ok: true }>('/api/settings/password', { method: 'PATCH', body: JSON.stringify(payload) }),
+
+  chatWithAiCoach: (payload: { message: string; history: ChatMessage[] }) =>
+    apiRequest<{ reply: string }>('/api/ai/chat', { method: 'POST', body: JSON.stringify(payload) }),
 };

@@ -773,6 +773,49 @@ footer {
   text-decoration: none;
 }
 
+.chat-window {
+  margin: 0.7rem 0;
+  padding: 0.75rem;
+  border: 1px solid #2f2f2f;
+  border-radius: 10px;
+  background-color: #111111;
+  min-height: 320px;
+  max-height: 480px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  white-space: pre-wrap;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background-color: #1e3a8a;
+  color: #dbeafe;
+}
+
+.chat-bubble.assistant {
+  align-self: flex-start;
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+.chat-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.55rem;
+  align-items: center;
+}
+
 @media (max-width: 900px) {
   .page-shell {
     margin-left: 0;
@@ -889,5 +932,9 @@ footer {
 
   .calendar-day {
     min-height: 105px;
+  }
+
+  .chat-form {
+    grid-template-columns: 1fr;
   }
 }
