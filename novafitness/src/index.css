@@ -1,227 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
+:root {
+  font-family: 'Bebas Neue', sans-serif;
+  color: #f4f4f5;
+  background-color: #121212;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
 body {
   margin: 0;
-  padding: 0;
-  font-family: 'Bebas Neue', sans-serif;
-  background-color: #1a1a1a;;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 42%),
+    radial-gradient(circle at left bottom, rgba(239, 68, 68, 0.1), transparent 50%),
+    #121212;
 }
 
-h1 {
-  margin: 0;
-  font-size: 2rem;
-  white-space: nowrap;
-}
-
-
-.app-container {
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: rgb(20, 19, 19);
-  border-radius: 8px;
-}
-
-.marquee {
-  overflow: hidden;
-  white-space: nowrap;
-  box-sizing: border-box;
-  
-}
-
-.marquee h1 {
-  display: inline-block;
-  min-width: 100%;
-  padding-right: 100%;
-  animation: marquee 10s linear infinite;
-}
-
-@keyframes marquee {
-  0%   { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
-}
-
-.category {
-  margin-bottom: 2rem;
-}
-
-.category-bar {
-  width: 100%;
-  background-color: #222;
-  color: white;
-  font-weight: bold;
-  font-size: 2rem;
-  padding: 1rem;
-  text-align: center;
-  word-spacing: 2rem;
-  letter-spacing: 0.7rem;
-  border-radius: 6px 6px 0 0;
-}
-
-.push {
-  background-color: #ef4444; /* red */
-}
-
-.pull {
-  background-color: #3b82f6; /* blue */
-}
-
-.legs {
-  background-color: #10b981; /* green */
-}
-
-.exercise-tabs {
-  display: flex;
-  gap: 5rem;
-  flex-wrap: wrap;
-  background-color: #1a1a1a;;
-  padding: 1.5rem;
-  border-radius: 0 0 6px 6px;
-}
-
-.exercise-tab {
-  background-color: rgb(245, 239, 239);
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(2, 2, 2, 0.1);
-  width: 140px;
-  text-align: center;
-  font-weight: 500;
-  cursor: pointer;
-  transition: transform 0.2s;
-  text-decoration: none;
+a {
   color: inherit;
-  overflow: hidden;
-}
-.thumbnail-container {
-  position: relative;
-  width: 100%;
-  height: 120px;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
-}
-
-.thumbnail {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 0.3s ease;
-}
-
-.gif-preview {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.exercise-tab:hover {
-  transform: scale(1.05);
-  
-  .thumbnail {
-    opacity: 0;
-  }
-  
-  .gif-preview {
-    opacity: 1;
-  }
-}
-
-/* Make tabs wider to accommodate images */
-.exercise-tab {
-  width: 200px;
-}
-
-.exercise-tab:hover {
-  transform: scale(1.05);
-}
-
-footer {
-  margin-top: 2rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.sidebar {
-  position: fixed;
-  left: -200px; /* Hide most of the sidebar */
-  top: 0;
-  height: 100vh;
-  width: 240px;
-  background-color: #1a1a1a;
-  transition: all 0.3s ease;
-  z-index: 1000;
-  display: flex;
-  transition: all 0.3s ease;
-}
-
-/* Add a visible portion that's always shown */
-.sidebar::before {
-  content: '›››';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  width: 40px;
-  height: 40px;
-  background-color: #1a1a1a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: white;
-  transform: translateY(-50%) rotate(0deg);
-  transition: transform 0.3s ease;
-}
-
-.sidebar:hover {
-  left: 0;
-}
-
-.sidebar-content {
-  width: 100%;
-  padding: 1rem;
-  color: rgb(235, 219, 219);
-}
-
-.icon-space {
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid #333;
-  margin-bottom: 1rem;
-}
-.icon-space span {
-  font-size: 10rem;  /* Make the icon bigger - adjust this value as needed */
-}
-
-.nav-item {
-  padding: 2rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  white-space: nowrap; /* Prevent text wrapping */
-}
-
-.nav-item:hover {
-
-
-  color: white
-}
-
-.active {
-  background-color: #333;
-  border-radius: 4px;
-}
-
-/* Adjust the main content to make room for the visible portion of sidebar */
-.app-container {
-  margin-left: 40px; /* Same as the visible portion width */
-  width: calc(100% - 40px);
 }
