@@ -1,54 +1,155 @@
-# React + TypeScript + Vite
+# NovaFitness Gym App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Full-stack gym tracking app with:
+- Guest-first browsing
+- Email/password authentication
+- Workout calendar planning
+- Progress logging + ratings
+- AI coach chat (Claude API) constrained to weightlifting/nutrition/health
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Home page is public (guest mode)
+- Auth landing page for sign up / log in
+- Workout Plan page:
+  - Add exercise blocks to a calendar
+  - Export to Excel-compatible CSV
+  - Requires login to save or export
+- Progress page:
+  - Search exercises
+  - Log weight entries
+  - View stats and rating (`noob`, `novice`, `average`, `pro`, `monster`)
+  - Requires login to persist logs
+- Statistics page:
+  - Redirects users to Progress insights
+  - Guest prompt to sign in
+- Settings page:
+  - Update email/password (authenticated users)
+- AI Chat tab:
+  - Uses Claude API through backend
+  - Refuses unrelated topics, jailbreak attempts, security/internal data requests, and code-generation requests
+  - Personalization limited to user workout + progress data
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Frontend: React 19 + TypeScript + Vite + React Router
+- Backend: Node.js + Express
+- Database: PostgreSQL (`pg`)
+- Auth: JWT in HttpOnly cookie
+- AI: Anthropic Claude Messages API
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Environment Variables
+
+Copy `.env.example` to `.env` and fill values:
+
+```env
+CLIENT_ORIGIN=http://localhost:5173
+VITE_API_BASE_URL=
+PORT=4000
+JWT_SECRET=replace-with-a-long-random-secret
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DB_NAME
+DATABASE_SSL=true
+CLAUDE_API_KEY=your-claude-api-key
+CLAUDE_MODEL=claude-3-5-sonnet-latest
+CLAUDE_API_URL=https://api.anthropic.com/v1/messages
+CLAUDE_API_VERSION=2023-06-01
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Notes:
+- `VITE_API_BASE_URL`:
+  - Local dev with Vite proxy: leave blank
+  - Separate frontend/backend hosts: set to backend URL ending in `/api`
+- `JWT_SECRET` should be long and random.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Local Development
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+From `novafitness/`:
+
+```bash
+npm install
+npm run dev
 ```
+
+This starts:
+- Frontend: `http://localhost:5173`
+- API: `http://localhost:4000`
+
+Health check:
+
+```bash
+curl http://localhost:4000/api/health
+```
+
+## Build
+
+```bash
+npm run lint
+npm run build
+npm run preview
+```
+
+## Database Schema
+
+Tables are initialized automatically on server startup:
+- `users` (email primary key)
+- `workout_plans` (FK: `user_email -> users.email`)
+- `progress_logs` (FK: `user_email -> users.email`)
+
+## Security Notes
+
+- SQL injection resistance: all queries are parameterized
+- Passwords are hashed (`bcryptjs`)
+- JWT stored in HttpOnly cookie (not in localStorage/sessionStorage)
+- API responses set `Cache-Control: no-store`
+- AI endpoint gets only user-specific workout/progress context
+- `.env` is gitignored; do not commit secrets
+
+## API Overview
+
+- Auth:
+  - `POST /api/auth/register`
+  - `POST /api/auth/login`
+  - `POST /api/auth/logout`
+  - `GET /api/auth/me`
+- Workout Plans:
+  - `GET /api/workout-plans?month=YYYY-MM`
+  - `POST /api/workout-plans`
+  - `DELETE /api/workout-plans/:id`
+- Progress:
+  - `GET /api/progress?search=...`
+  - `POST /api/progress`
+  - `DELETE /api/progress/:id`
+- Settings:
+  - `PATCH /api/settings/email`
+  - `PATCH /api/settings/password`
+- AI:
+  - `POST /api/ai/chat`
+
+## Deployment Notes
+
+If frontend and API are not on the same host, set:
+
+```env
+VITE_API_BASE_URL=https://your-api-domain.com/api
+```
+
+Also set production env vars for the API host:
+- `DATABASE_URL`
+- `DATABASE_SSL`
+- `JWT_SECRET`
+- `CLAUDE_API_KEY`
+- `CLIENT_ORIGIN` (your frontend URL)
+
+## Troubleshooting
+
+### `Request failed (404)` when creating account
+- Frontend is likely pointing at the wrong API origin.
+- Set `VITE_API_BASE_URL` to your real API base and restart.
+
+### `npm run dev` starts then frontend closes
+- Ensure no stale process conflicts on port `4000`.
+- Restart terminal and rerun `npm run dev` from `novafitness/`.
+
+### DB connection issues
+- Verify `DATABASE_URL`
+- For managed Postgres providers (Neon/Supabase/etc.), `DATABASE_SSL=true` is usually required.
